@@ -237,6 +237,7 @@ MonoBehaviour:
   offsetColor: {r: 0.8509804, g: 0.7176471, b: 0.57254905, a: 1}
   spriteRenderer: {fileID: 8127375763698159448}
   numberText: {fileID: 6294473181301726212}
+  numberOfBombs: 0
 --- !u!61 &6332558681070650428
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -266,7 +267,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

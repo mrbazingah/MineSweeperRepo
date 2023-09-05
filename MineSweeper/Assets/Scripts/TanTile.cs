@@ -11,10 +11,21 @@ public class TanTile : MonoBehaviour
 
     [SerializeField] int numberOfBombs;
 
+    BoxCollider2D myBoxcollider;
+
+    void Start()
+    {
+        myBoxcollider = GetComponent<BoxCollider2D>();
+    }
+
+    void Update()
+    {
+        CheckForBombs();
+    }
+
     void CheckForBombs()
     {
-        if (myBodyCollider.IsTouchingLayers(LayerMask.GetMask("Enemy", "Hazard"))
-            || myFeetCollider.IsTouchingLayers(LayerMask.GetMask("Enemy", "Hazard")))
+        
     }
 
     public void Init(bool greenTileIsOffset)
