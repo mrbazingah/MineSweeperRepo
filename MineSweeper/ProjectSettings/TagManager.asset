@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Bomb
   layers:
   - Default
   - TransparentFX
@@ -43,6 +44,9 @@ TagManager:
     locked: 0
   - name: TanTile
     uniqueID: 3986331631
+    locked: 0
+  - name: Bomb
+    uniqueID: 2167246019
     locked: 0
   - name: GreenTile
     uniqueID: 2005829643
