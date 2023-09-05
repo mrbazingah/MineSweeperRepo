@@ -48,12 +48,22 @@ public class GreenTile : MonoBehaviour
             {
                 flag.SetActive(true);
                 hasFlag = true;
+
+                if (hasBomb)
+                {
+                    gameSession.AddFlaggedBombs();
+                }
             }
 
             else if (hasFlag)
             {
                 flag.SetActive(false);
                 hasFlag = false;
+                
+                if (hasBomb)
+                {
+                    gameSession.SubtractFlaggedBombs();
+                }
             }
         }
     }
@@ -62,6 +72,8 @@ public class GreenTile : MonoBehaviour
     {
         spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
     }
+
+  
 
     void OnMouseEnter()
     {
@@ -96,17 +108,5 @@ public class GreenTile : MonoBehaviour
                 Debug.Log("You Lost");
             }
         }
-    }
-
-    public int ReturnAmountOfFlaggedBombs()
-    {
-        int localVar = 0;
-
-        if (hasFlag && hasBomb)
-        {
-            localVar++;
-        }
-
-        return localVar;
     }
 }

@@ -7,9 +7,10 @@ public class GameSession : MonoBehaviour
 {
     [SerializeField] GameObject winCanvas;
     [SerializeField] GameObject gameOverCanvas;
+    [SerializeField] int amountOfFlaggedBombs = 0;
 
-    int amountOfFlaggedBombs = 0;
     int amountOfBombs = 0;
+    bool hasStarted;
 
     GreenTile greenTile;
 
@@ -24,19 +25,41 @@ public class GameSession : MonoBehaviour
         
     }
 
-    void Update()
+    public void AddFlaggedBombs()
     {
-        CheckFlaggedBombs();
-    }
+        amountOfFlaggedBombs++;
 
-    void CheckFlaggedBombs()
-    {
-        amountOfFlaggedBombs += greenTile.ReturnAmountOfFlaggedBombs();
+        Debug.Log("+1 Flag");
 
-        if (amountOfBombs == amountOfFlaggedBombs)
+        if (amountOfBombs <= amountOfFlaggedBombs)
         {
             winCanvas.SetActive(true);
             Time.timeScale = 0;
+
+            Debug.Log("You Won");
+        }
+    }
+
+    public void SubtractFlaggedBombs()
+    {
+        amountOfFlaggedBombs--;
+
+        Debug.Log("-1 Flag");
+
+        if (amountOfBombs <= amountOfFlaggedBombs)
+        {
+            winCanvas.SetActive(true);
+            Time.timeScale = 0;
+
+            Debug.Log("You Won");
+        }
+    }
+
+    void StartOnMouseClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            hasStarted = true;
         }
     }
 
@@ -50,5 +73,7 @@ public class GameSession : MonoBehaviour
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
+
+        Time.timeScale = 1;
     }
 }

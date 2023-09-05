@@ -11,7 +11,6 @@ public class TanTile : MonoBehaviour
     [SerializeField] float bombCheckRadius;
 
     int numberOfBombs;
-    bool foundBombs;
 
     void Start()
     {
@@ -28,11 +27,6 @@ public class TanTile : MonoBehaviour
             {
                 numberOfBombs++;
                 numberText.text = numberOfBombs.ToString();
-                foundBombs = true;
-            }
-            else
-            {
-                foundBombs = false;
             }
         }
 
