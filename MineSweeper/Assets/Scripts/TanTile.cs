@@ -8,28 +8,39 @@ public class TanTile : MonoBehaviour
     [SerializeField] Color baseColor, offsetColor;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] TextMeshProUGUI numberText;
+    [SerializeField] float bombCheckRadius;
 
-    [SerializeField] int numberOfBombs;
-
-    BoxCollider2D myBoxcollider;
+    int numberOfBombs;
+    bool foundBombs;
 
     void Start()
-    {
-        myBoxcollider = GetComponent<BoxCollider2D>();
-    }
-
-    void Update()
     {
         CheckForBombs();
     }
 
     void CheckForBombs()
     {
-        
+        Collider2D[] collisions = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); ;
+
+        foreach (Collider2D bombsNearby in collisions)
+        {
+            if (bombsNearby.gameObject.CompareTag("Bomb"))
+            {
+                numberOfBombs++;
+                numberText.text = numberOfBombs.ToString();
+                foundBombs = true;
+            }
+            else
+            {
+                foundBombs = false;
+            }
+        }
+
+      
     }
 
-    public void Init(bool greenTileIsOffset)
+    public void Init(bool tanTileOffset)
     {
-        spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
+        spriteRenderer.color = tanTileOffset ? baseColor : offsetColor;
     }
 }

@@ -1,25 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GreenTile : MonoBehaviour
 {
     [SerializeField] Color baseColor, offsetColor;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] GameObject highlight;
-
+    [SerializeField] GameObject flag;
     [SerializeField] GameObject bombPrefab;
     [SerializeField] float randomFactor;
 
     bool hasBomb;
+    bool hasFlag;
+    bool mouseIsOnTile;
+    bool canPlay;
 
-    void Start()
+    GameSession gameSession;
+
+    void Awake()
     {
+        gameSession = FindObjectOfType<GameSession>();
+
+        canPlay = true;
+
         int bombCanSpawn = (int)Random.Range(0, randomFactor);
+
         if (bombCanSpawn == 0)
         {
             Instantiate(bombPrefab, new Vector3(transform.position.x, transform.position.y, 0.5f), Quaternion.identity);
             hasBomb = true;
+        }
+    }
+
+    void Update()
+    {
+        if (Time.timeScale == 0)
+        {
+            canPlay = false;
+        }
+
+        if (mouseIsOnTile && Input.GetKeyDown(KeyCode.Mouse1) && canPlay)
+        {
+            if (!hasFlag)
+            {
+                flag.SetActive(true);
+                hasFlag = true;
+            }
+
+            else if (hasFlag)
+            {
+                flag.SetActive(false);
+                hasFlag = false;
+            }
         }
     }
 
@@ -30,24 +65,48 @@ public class GreenTile : MonoBehaviour
 
     void OnMouseEnter()
     {
-        highlight.SetActive(true);
+        if (canPlay)
+        {
+            highlight.SetActive(true);
+
+            mouseIsOnTile = true;
+        }
     }
 
     void OnMouseExit()
     {
-        highlight.SetActive(false);
+        if (canPlay)
+        {
+            highlight.SetActive(false);
+
+            mouseIsOnTile = false;
+        }
     }
 
     void OnMouseDown()
     {
-        Destroy(gameObject);
-
-        if (hasBomb)
+        if (!hasFlag && canPlay)
         {
-            //TODO
-            //Make a game over screen
+            Destroy(gameObject);
 
-            Debug.Log("You Lost");
+            if (hasBomb)
+            {
+                gameSession.Lose();
+
+                Debug.Log("You Lost");
+            }
         }
+    }
+
+    public int ReturnAmountOfFlaggedBombs()
+    {
+        int localVar = 0;
+
+        if (hasFlag && hasBomb)
+        {
+            localVar++;
+        }
+
+        return localVar;
     }
 }
