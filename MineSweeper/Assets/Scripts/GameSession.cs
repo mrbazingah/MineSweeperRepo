@@ -7,52 +7,24 @@ public class GameSession : MonoBehaviour
 {
     [SerializeField] GameObject winCanvas;
     [SerializeField] GameObject gameOverCanvas;
-    [SerializeField] int amountOfFlaggedBombs = 0;
 
-    int amountOfBombs = 0;
+    int amountOfUnBombedTiles = 0;
     bool hasStarted;
-
-    GreenTile greenTile;
 
     void Start()
     {
-        greenTile = FindObjectOfType<GreenTile>();
-
-        amountOfBombs = FindObjectsOfType<Bomb>().Length;
-
         winCanvas.SetActive(false);
         gameOverCanvas.SetActive(false);
-        
     }
 
-    public void AddFlaggedBombs()
+    public void AddAmountOfUnBombedTiles()
     {
-        amountOfFlaggedBombs++;
-
-        Debug.Log("+1 Flag");
-
-        if (amountOfBombs <= amountOfFlaggedBombs)
-        {
-            winCanvas.SetActive(true);
-            Time.timeScale = 0;
-
-            Debug.Log("You Won");
-        }
+        amountOfUnBombedTiles++;
     }
 
-    public void SubtractFlaggedBombs()
+    public void SubtractAmountOfUnBombedTiles()
     {
-        amountOfFlaggedBombs--;
-
-        Debug.Log("-1 Flag");
-
-        if (amountOfBombs <= amountOfFlaggedBombs)
-        {
-            winCanvas.SetActive(true);
-            Time.timeScale = 0;
-
-            Debug.Log("You Won");
-        }
+        amountOfUnBombedTiles--;
     }
 
     void StartOnMouseClick()

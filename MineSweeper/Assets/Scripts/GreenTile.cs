@@ -33,6 +33,10 @@ public class GreenTile : MonoBehaviour
             Instantiate(bombPrefab, new Vector3(transform.position.x, transform.position.y, 0.5f), Quaternion.identity);
             hasBomb = true;
         }
+        else
+        {
+            gameSession.AddAmountOfUnBombedTiles();
+        }
     }
 
     void Update()
@@ -48,22 +52,12 @@ public class GreenTile : MonoBehaviour
             {
                 flag.SetActive(true);
                 hasFlag = true;
-
-                if (hasBomb)
-                {
-                    gameSession.AddFlaggedBombs();
-                }
             }
 
             else if (hasFlag)
             {
                 flag.SetActive(false);
                 hasFlag = false;
-                
-                if (hasBomb)
-                {
-                    gameSession.SubtractFlaggedBombs();
-                }
             }
         }
     }
@@ -99,13 +93,17 @@ public class GreenTile : MonoBehaviour
     {
         if (!hasFlag && canPlay)
         {
-            Destroy(gameObject);
-
             if (hasBomb)
             {
                 gameSession.Lose();
 
+                Destroy(gameObject);
                 Debug.Log("You Lost");
+            }
+            else
+            {
+                gameSession.SubtractAmountOfUnBombedTiles();
+                Destroy(gameObject);
             }
         }
     }

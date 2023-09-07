@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Bomb
   - GreenTile
+  - Flag
+  - TanTile
   layers:
   - Default
   - TransparentFX
