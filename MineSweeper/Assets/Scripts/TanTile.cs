@@ -15,7 +15,7 @@ public class TanTile : MonoBehaviour
     int numberOfFlags;
     bool bombsAreNearby;
     bool mouseIsOnTile;
-    bool foundGreenTiles = false;
+    bool foundGreenTiles = true;
 
     void Start()
     {
@@ -40,7 +40,6 @@ public class TanTile : MonoBehaviour
     void Update()
     {
         DestroyGreenTiles();
-        CheckForGreenTiles();
         CheckForFlags();
     }
 
@@ -48,7 +47,7 @@ public class TanTile : MonoBehaviour
     {
         if (mouseIsOnTile && Input.GetKeyDown(KeyCode.Mouse0) && Input.GetKeyDown(KeyCode.Mouse1) && numberOfBombs == numberOfFlags)
         {
-            Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); ;
+            Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); 
 
             foreach (Collider2D greenTile in greenTileCollision)
             {
@@ -58,13 +57,18 @@ public class TanTile : MonoBehaviour
                 }
             }
         }
-    }
 
-    void CheckForGreenTiles()
-    {
-        if (!bombsAreNearby)
+        if (!bombsAreNearby && !foundGreenTiles)
         {
+            Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius);
 
+            foreach (Collider2D greenTile in greenTileCollision)
+            {
+                if (greenTile.gameObject.CompareTag("GreenTile"))
+                {
+                    Destroy(greenTile.gameObject);
+                }
+            }
         }
     }
 
@@ -82,9 +86,22 @@ public class TanTile : MonoBehaviour
         }
     }
 
-    public void Init(bool tanTileOffset)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        spriteRenderer.color = tanTileOffset ? baseColor : offsetColor;
+        if (other.CompareTag("GreenTile"))
+        {
+            foundGreenTiles = true;
+            Debug.Log("Green Tile is Found");
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("GreenTile"))
+        {
+            foundGreenTiles = false;
+            Debug.Log("Green Tile is Gone");
+        }
     }
 
     void OnMouseEnter()
@@ -103,6 +120,11 @@ public class TanTile : MonoBehaviour
             highlight.SetActive(false);
             mouseIsOnTile = false;
         }
+    }
+
+    public void Init(bool tanTileOffset)
+    {
+        spriteRenderer.color = tanTileOffset ? baseColor : offsetColor;
     }
 
     void OnDrawGizmosSelected()

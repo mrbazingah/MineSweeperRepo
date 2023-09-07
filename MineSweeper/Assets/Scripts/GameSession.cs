@@ -17,6 +17,11 @@ public class GameSession : MonoBehaviour
         gameOverCanvas.SetActive(false);
     }
 
+    void Update()
+    {
+        Win();
+    }
+
     public void AddAmountOfUnBombedTiles()
     {
         amountOfUnBombedTiles++;
@@ -39,6 +44,15 @@ public class GameSession : MonoBehaviour
     {
         gameOverCanvas.SetActive(true);
         Time.timeScale = 0;
+    }
+
+    void Win()
+    {
+        if (amountOfUnBombedTiles == 0)
+        {
+            winCanvas.SetActive(true);
+            Time.timeScale = 0;
+        }
     }
 
     public void RestartGame()

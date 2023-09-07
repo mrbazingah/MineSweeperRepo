@@ -18,7 +18,7 @@ public class TanGridManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                var spawnTanTile = Instantiate(TanTilePrefab, new Vector3(x, y, 0.5f), Quaternion.identity);
+                var spawnTanTile = Instantiate(TanTilePrefab, new Vector3(x, y, 0.1f), Quaternion.identity);
                 spawnTanTile.name = $"TanTile {x}{y}";
 
                 var is0ffset = (x % 2 != 0 && y % 2 == 0) || (x % 2 == 0 && y % 2 != 0);

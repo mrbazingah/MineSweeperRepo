@@ -30,7 +30,7 @@ public class GreenTile : MonoBehaviour
 
         if (bombCanSpawn == 0)
         {
-            Instantiate(bombPrefab, new Vector3(transform.position.x, transform.position.y, 0.5f), Quaternion.identity);
+            Instantiate(bombPrefab, new Vector3(transform.position.x, transform.position.y, 0.1f), Quaternion.identity);
             hasBomb = true;
         }
         else
