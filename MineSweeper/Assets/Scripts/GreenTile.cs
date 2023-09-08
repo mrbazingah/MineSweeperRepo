@@ -67,8 +67,6 @@ public class GreenTile : MonoBehaviour
         spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
     }
 
-  
-
     void OnMouseEnter()
     {
         if (canPlay)

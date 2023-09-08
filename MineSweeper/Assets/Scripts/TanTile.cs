@@ -45,7 +45,7 @@ public class TanTile : MonoBehaviour
 
     void DestroyGreenTiles()
     {
-        if (mouseIsOnTile && Input.GetKeyDown(KeyCode.Mouse0) && Input.GetKeyDown(KeyCode.Mouse1) && numberOfBombs == numberOfFlags)
+        if (mouseIsOnTile && Input.GetKey(KeyCode.Mouse0) && Input.GetKey(KeyCode.Mouse1) && numberOfBombs >= numberOfFlags)
         {
             Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); 
 
@@ -86,24 +86,6 @@ public class TanTile : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("GreenTile"))
-        {
-            foundGreenTiles = true;
-            Debug.Log("Green Tile is Found");
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("GreenTile"))
-        {
-            foundGreenTiles = false;
-            Debug.Log("Green Tile is Gone");
-        }
-    }
-
     void OnMouseEnter()
     {
         if (bombsAreNearby)
@@ -130,6 +112,6 @@ public class TanTile : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position, 0.4f);
+        Gizmos.DrawSphere(transform.position, 0.1f);
     }
 }
