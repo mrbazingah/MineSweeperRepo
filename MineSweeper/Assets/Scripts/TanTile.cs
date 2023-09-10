@@ -10,9 +10,9 @@ public class TanTile : MonoBehaviour
     [SerializeField] GameObject highlight;
     [SerializeField] TextMeshProUGUI numberText;
     [SerializeField] float bombCheckRadius;
+    [SerializeField] int numberOfBombs;
+    [SerializeField] int numberOfFlags;
 
-    int numberOfBombs;
-    int numberOfFlags;
     bool bombsAreNearby;
     bool mouseIsOnTile;
     bool foundGreenTiles = true;
@@ -74,14 +74,17 @@ public class TanTile : MonoBehaviour
 
     void CheckForFlags()
     {
-        Collider2D[] flagCollisions = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); ;
-
-        foreach (Collider2D flag in flagCollisions)
+        if (numberOfFlags != numberOfBombs)
         {
-            if (flag.gameObject.CompareTag("Flag"))
+            Collider2D[] flagCollisions = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); ;
+
+            foreach (Collider2D flag in flagCollisions)
             {
-                numberOfFlags++;
-                Debug.Log("Found flags: " + numberOfFlags);
+                if (flag.gameObject.CompareTag("Flag"))
+                {
+                    numberOfFlags++;
+                    Debug.Log("Found flags");
+                }
             }
         }
     }
@@ -112,6 +115,6 @@ public class TanTile : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position, 0.1f);
+        Gizmos.DrawSphere(transform.position, bombCheckRadius);
     }
 }
