@@ -239,7 +239,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 8127375763698159448}
   highlight: {fileID: 6438331115935896366}
   numberText: {fileID: 6294473181301726212}
-  bombCheckRadius: 1.5
+  bombCheckRadius: 1.4
   numberOfBombs: 0
   numberOfFlags: 0
 --- !u!61 &2115775842586093626

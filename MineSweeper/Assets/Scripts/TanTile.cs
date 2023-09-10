@@ -10,6 +10,7 @@ public class TanTile : MonoBehaviour
     [SerializeField] GameObject highlight;
     [SerializeField] TextMeshProUGUI numberText;
     [SerializeField] float bombCheckRadius;
+    [SerializeField] float greenTileAboveCheckRadius;
     [SerializeField] int numberOfBombs;
     [SerializeField] int numberOfFlags;
 
@@ -45,7 +46,21 @@ public class TanTile : MonoBehaviour
 
     void DestroyGreenTiles()
     {
-        if (mouseIsOnTile && Input.GetKey(KeyCode.Mouse0) && Input.GetKey(KeyCode.Mouse1) && numberOfBombs >= numberOfFlags)
+        Collider2D[] greenTileAboveCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius);
+
+        foreach (Collider2D greenTile in greenTileAboveCollision)
+        {
+            if (greenTile.gameObject.CompareTag("GreenTile"))
+            {
+                foundGreenTiles = true;
+            }
+            else
+            {
+                foundGreenTiles = false;
+            }
+        }
+
+        if (mouseIsOnTile && Input.GetKey(KeyCode.Mouse0) && Input.GetKey(KeyCode.Mouse1) && numberOfBombs == numberOfFlags)
         {
             Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); 
 
