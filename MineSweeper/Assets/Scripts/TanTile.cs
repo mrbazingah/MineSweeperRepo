@@ -18,9 +18,13 @@ public class TanTile : MonoBehaviour
     bool mouseIsOnTile;
     bool foundGreenTiles = true;
 
+    BoxCollider2D myBoxCollider;
+
     void Start()
     {
         CheckForBombs();
+
+        myBoxCollider = GetComponent<BoxCollider2D>();
     }
 
     void CheckForBombs()
@@ -46,20 +50,6 @@ public class TanTile : MonoBehaviour
 
     void DestroyGreenTiles()
     {
-        Collider2D[] greenTileAboveCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius);
-
-        foreach (Collider2D greenTile in greenTileAboveCollision)
-        {
-            if (greenTile.gameObject.CompareTag("GreenTile"))
-            {
-                foundGreenTiles = true;
-            }
-            else
-            {
-                foundGreenTiles = false;
-            }
-        }
-
         if (mouseIsOnTile && Input.GetKey(KeyCode.Mouse0) && Input.GetKey(KeyCode.Mouse1) && numberOfBombs == numberOfFlags)
         {
             Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius); 
@@ -73,7 +63,7 @@ public class TanTile : MonoBehaviour
             }
         }
 
-        if (!bombsAreNearby && !foundGreenTiles)
+        if (!bombsAreNearby && !myBoxCollider.IsTouchingLayers(LayerMask.GetMask("GreenTile")))
         {
             Collider2D[] greenTileCollision = Physics2D.OverlapCircleAll(transform.position, bombCheckRadius);
 
