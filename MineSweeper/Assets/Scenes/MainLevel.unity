@@ -435,6 +435,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252324124}
   m_CullTransparentMesh: 1
+--- !u!1 &413299272
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 413299273}
+  m_Layer: 0
+  m_Name: TanTiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &413299273
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413299272}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -946,6 +977,7 @@ MonoBehaviour:
   height: 9
   greenTilePrefab: {fileID: 671844715375966639, guid: 4f6124bdf303fad49883ec8d6f34796e, type: 3}
   camPos: {fileID: 519420032}
+  parent: {fileID: 1758652506}
 --- !u!1 &1463020841
 GameObject:
   m_ObjectHideFlags: 0
@@ -1225,6 +1257,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640127329}
   m_CullTransparentMesh: 1
+--- !u!1 &1758652506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1758652507}
+  m_Layer: 0
+  m_Name: GreenTiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1758652507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758652506}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1772995227
 GameObject:
   m_ObjectHideFlags: 0
@@ -1474,6 +1537,7 @@ MonoBehaviour:
   width: 16
   height: 9
   TanTilePrefab: {fileID: 8984242918749753530, guid: 420b97bf466b36349a2ed9a9982e426a, type: 3}
+  parent: {fileID: 413299272}
 --- !u!1 &2021321335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1625,3 +1689,5 @@ SceneRoots:
   - {fileID: 988407531}
   - {fileID: 1843812069}
   - {fileID: 1592343716896599615}
+  - {fileID: 1758652507}
+  - {fileID: 413299273}

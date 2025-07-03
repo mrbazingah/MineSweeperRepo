@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TanGridManager : MonoBehaviour
 {
     [SerializeField] int width, height;
     [SerializeField] TanTile TanTilePrefab;
+    [SerializeField] GameObject parent;
 
     void Awake()
     {
@@ -22,7 +21,9 @@ public class TanGridManager : MonoBehaviour
                 spawnTanTile.name = $"TanTile {x}{y}";
 
                 var is0ffset = (x % 2 != 0 && y % 2 == 0) || (x % 2 == 0 && y % 2 != 0);
-                spawnTanTile.Init(is0ffset);
+                spawnTanTile.SetColor(is0ffset);
+
+                spawnTanTile.transform.SetParent(parent.transform);
             }
         }
     }

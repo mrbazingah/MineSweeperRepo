@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GreenGridManager : MonoBehaviour
@@ -7,6 +5,7 @@ public class GreenGridManager : MonoBehaviour
     [SerializeField] int width, height;
     [SerializeField] GreenTile greenTilePrefab;
     [SerializeField] Transform camPos;
+    [SerializeField] GameObject parent;
 
     void Awake()
     {
@@ -22,8 +21,13 @@ public class GreenGridManager : MonoBehaviour
                 var spawnGreenTile = Instantiate(greenTilePrefab, new Vector3(x, y), Quaternion.identity);
                 spawnGreenTile.name = $"GreenTile {x}{y}";
 
+                string tileIndex = $"{x}{y}";
+                spawnGreenTile.SetIndex(tileIndex);
+
                 var is0ffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
-                spawnGreenTile.Init(is0ffset);
+                spawnGreenTile.SetColor(is0ffset);
+
+                spawnGreenTile.transform.SetParent(parent.transform);
             }
         }
 

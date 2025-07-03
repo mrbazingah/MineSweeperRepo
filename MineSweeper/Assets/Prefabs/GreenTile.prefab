@@ -394,6 +394,4 @@ MonoBehaviour:
   offsetColor: {r: 0.28796846, g: 0.745283, b: 0.19335175, a: 1}
   spriteRenderer: {fileID: 1202592593724134971}
   highlight: {fileID: 1514998485663064389}
-  flag: {fileID: 3186131350512891860}
-  bombPrefab: {fileID: 5388715292790686097, guid: 802443cf8ac766d4fb8de0e3b7d51f4e, type: 3}
-  randomFactor: 5
+  neighbors: []

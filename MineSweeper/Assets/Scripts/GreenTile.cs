@@ -1,108 +1,96 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class GreenTile : MonoBehaviour
 {
     [SerializeField] Color baseColor, offsetColor;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] GameObject highlight;
-    [SerializeField] GameObject flag;
-    [SerializeField] GameObject bombPrefab;
-    [SerializeField] float randomFactor;
+    [SerializeField] List<GameObject> neighbors;
+    [SerializeField] string index;
 
-    bool hasBomb;
-    bool hasFlag;
-    bool mouseIsOnTile;
-    bool canPlay;
+    bool mouseIsOn;
 
-    GameSession gameSession;
-
-    void Awake()
+    void Start()
     {
-        gameSession = FindObjectOfType<GameSession>();
+        SetNeighbors();
+    }
 
-        canPlay = true;
+    void SetNeighbors()
+    {
+        int firstIndex = int.Parse(index) - 9;
+        string firstIndexString = firstIndex < 10 ? "0" + firstIndex.ToString() : firstIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {firstIndexString}"));
 
-        int bombCanSpawn = (int)Random.Range(0, randomFactor);
+        int secondIndex = int.Parse(index) + 1;
+        string secondIndexString = secondIndex < 10 ? "0" + secondIndex.ToString() : secondIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {secondIndexString}"));
 
-        if (bombCanSpawn == 0)
-        {
-            Instantiate(bombPrefab, new Vector3(transform.position.x, transform.position.y, 0.1f), Quaternion.identity);
-            hasBomb = true;
-        }
-        else
-        {
-            gameSession.AddAmountOfUnBombedTiles();
-        }
+        int thirdIndex = int.Parse(index) + 11;
+        string thirdIndexString = thirdIndex < 10 ? "0" + thirdIndex.ToString() : thirdIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {thirdIndexString}"));
+
+        int forthIndex = int.Parse(index) - 10;
+        string forthIndexIndexString = forthIndex < 10 ? "0" + forthIndex.ToString() : forthIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {forthIndexIndexString}"));
+
+        int fifthIndex = int.Parse(index) + 10;
+        string fifthIndexString = fifthIndex < 10 ? "0" + fifthIndex.ToString() : fifthIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {fifthIndexString}"));
+
+        int sixthIndex = int.Parse(index) - 11;
+        string sixthIndexIndexString = sixthIndex < 10 ? "0" + sixthIndex.ToString() : sixthIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {sixthIndexIndexString}"));
+
+        int seventhIndex = int.Parse(index) - 1;
+        string seventhIndexIndexString = seventhIndex < 10 ? "0" + seventhIndex.ToString() : seventhIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {seventhIndexIndexString}"));
+
+        int eigthIndex = int.Parse(index) + 9;
+        string eigthIndexIndexString = eigthIndex < 10 ? "0" + eigthIndex.ToString() : eigthIndex.ToString();
+        neighbors.Add(GameObject.Find($"GreenTile {eigthIndexIndexString}"));
     }
 
     void Update()
     {
-        if (Time.timeScale == 0)
+        if (mouseIsOn && Input.GetMouseButtonDown(0))
         {
-            canPlay = false;
+            Destroy(gameObject);
         }
 
-        if (mouseIsOnTile && Input.GetKeyDown(KeyCode.Mouse1) && canPlay)
+        for (int i = 0; i < neighbors.Count; i++)
         {
-            if (!hasFlag)
+            if (neighbors[i] == null)
             {
-                flag.SetActive(true);
-                hasFlag = true;
-            }
-
-            else if (hasFlag)
-            {
-                flag.SetActive(false);
-                hasFlag = false;
+                neighbors.RemoveAt(i);
             }
         }
-    }
-
-    public void Init(bool greenTileIsOffset)
-    {
-        spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
     }
 
     void OnMouseEnter()
     {
-        if (canPlay)
-        {
-            highlight.SetActive(true);
-
-            mouseIsOnTile = true;
-        }
+        mouseIsOn = true;
+        highlight.SetActive(true);
     }
 
     void OnMouseExit()
     {
-        if (canPlay)
-        {
-            highlight.SetActive(false);
-
-            mouseIsOnTile = false;
-        }
+        mouseIsOn = false;
+        highlight.SetActive(false);
     }
 
-    void OnMouseDown()
+    public void SetColor(bool greenTileIsOffset)
     {
-        if (!hasFlag && canPlay)
-        {
-            if (hasBomb)
-            {
-                gameSession.Lose();
+        spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
+    }
 
-                Destroy(gameObject);
-                Debug.Log("You Lost");
-            }
-            else
-            {
-                gameSession.SubtractAmountOfUnBombedTiles();
-                Destroy(gameObject);
-            }
-        }
+    public void SetIndex(string newIndex)
+    {
+        index = newIndex;
+    }
+
+    public List<GameObject> GetNeighbors()
+    {
+        return neighbors;
     }
 }
