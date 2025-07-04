@@ -13,10 +13,15 @@ public class GreenGridManager : MonoBehaviour
     [Header("Bomb Placement Settings")]
     [SerializeField, Min(0)] int safeAreaRadius = 1;
 
-    private List<GameObject> allTiles = new List<GameObject>();
+    List<GameObject> allTiles = new List<GameObject>();
+
+    int tilesRevealed;
+
+    GameSession gameSession;
 
     void Awake()
     {
+        gameSession = FindObjectOfType<GameSession>();
         GenerateGrid();
     }
 
@@ -106,5 +111,33 @@ public class GreenGridManager : MonoBehaviour
         string name = $"GreenTile {x}{y}";
         var go = allTiles.Find(g => g.name == name);
         return go != null ? go.GetComponent<GreenTile>() : null;
+    }
+
+    public void ProcessTiles()
+    {
+        List<GreenTile> noBombTiles = new List<GreenTile>();
+
+        for (int i = 0; i < allTiles.Count; i++)
+        {
+            GreenTile tileScript = allTiles[i].GetComponent<GreenTile>();
+            if (!tileScript.HasBomb)
+            {
+                noBombTiles.Add(tileScript);
+            }
+        }
+
+        int count = 0;
+        for (int i = 0; i < noBombTiles.Count; i++)
+        {
+            if (noBombTiles[i].IsRevealed())
+            {
+                count++;
+            }
+        }
+
+        if (count == noBombTiles.Count)
+        {
+            gameSession.Win();
+        }
     }
 }

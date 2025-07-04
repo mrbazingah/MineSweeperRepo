@@ -25,6 +25,7 @@ public class GreenTile : MonoBehaviour
 
     GameSession gameSession;
     ColorManager colorManager;
+    GreenGridManager gridManager;
 
     public Vector2Int GridPosition => new Vector2Int(gridX, gridY);
     public bool HasBomb => hasBomb;
@@ -34,6 +35,7 @@ public class GreenTile : MonoBehaviour
     {
         gameSession = FindObjectOfType<GameSession>();
         colorManager = FindObjectOfType<ColorManager>();
+        gridManager = FindObjectOfType<GreenGridManager>();
     }
 
     /// <summary>Called by GridManager when instantiating.</summary>
@@ -125,7 +127,9 @@ public class GreenTile : MonoBehaviour
         }
 
         if (mouseIsOn && Input.GetMouseButtonDown(0) && !isFlagged)
+        {
             gameSession.OnTileClicked(this);
+        }
 
         neighbors.RemoveAll(n => n == null);
 
@@ -153,6 +157,8 @@ public class GreenTile : MonoBehaviour
     {
         visuals.SetActive(false);
         isRevealed = true;
+
+        gridManager.ProcessTiles();
     }
 
     void OnMouseEnter()
@@ -174,4 +180,6 @@ public class GreenTile : MonoBehaviour
     }
 
     public List<GameObject> GetNeighbors() => neighbors;
+
+    public bool IsRevealed() => isRevealed;
 }

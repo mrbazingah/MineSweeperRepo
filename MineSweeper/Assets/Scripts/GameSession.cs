@@ -60,6 +60,20 @@ public class GameSession : MonoBehaviour
         }
     }
 
+    public void Win()
+    {
+        StartCoroutine(ProcessWin());
+    }
+
+    IEnumerator ProcessWin()
+    {
+        gameOver = true;
+
+        yield return new WaitForSeconds(gameOverTimeDelay);
+
+        winPanel.SetActive(true);
+    }
+
     IEnumerator ProcessLoss()
     {
         gameOver = true;

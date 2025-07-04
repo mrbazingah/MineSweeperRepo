@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class TODO : MonoBehaviour
 {
-    //Win Screen
     //Start menu
     //Settings menu
     //Add a timer
