@@ -1240,7 +1240,7 @@ MonoBehaviour:
   greenTilePrefab: {fileID: 671844715375966639, guid: 4f6124bdf303fad49883ec8d6f34796e, type: 3}
   camPos: {fileID: 519420032}
   parent: {fileID: 1758652506}
-  amountOfBombs: 40
+  amountOfBombs: 33
   safeAreaRadius: 2
 --- !u!1 &1463020841
 GameObject:
@@ -2064,21 +2064,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 988407527}
     - target: {fileID: 6851265176694732657, guid: 8914a1bb08fb73a4da0d238c3544bbee, type: 3}
-      propertyPath: winCanvas
-      value: 
-      objectReference: {fileID: 988407527}
-    - target: {fileID: 6851265176694732657, guid: 8914a1bb08fb73a4da0d238c3544bbee, type: 3}
       propertyPath: gameOverPanel
       value: 
       objectReference: {fileID: 110964071}
-    - target: {fileID: 6851265176694732657, guid: 8914a1bb08fb73a4da0d238c3544bbee, type: 3}
-      propertyPath: gameOverCanvas
-      value: 
-      objectReference: {fileID: 110964071}
-    - target: {fileID: 6851265176694732657, guid: 8914a1bb08fb73a4da0d238c3544bbee, type: 3}
-      propertyPath: gameOverTimeDelay
-      value: 0.6
-      objectReference: {fileID: 0}
     - target: {fileID: 7209652244521005211, guid: 8914a1bb08fb73a4da0d238c3544bbee, type: 3}
       propertyPath: m_Name
       value: GameSession
