@@ -1,4 +1,6 @@
+﻿// GreenTile.cs
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GreenTile : MonoBehaviour
@@ -6,77 +8,39 @@ public class GreenTile : MonoBehaviour
     [SerializeField] Color baseColor, offsetColor;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] GameObject highlight;
+    [SerializeField] GameObject visuals;
+    [SerializeField] GameObject flag;
+    [SerializeField] GameObject bomb;
+    [SerializeField] TextMeshProUGUI numberText;
     [SerializeField] List<GameObject> neighbors;
     [SerializeField] string index;
+    [SerializeField] bool hasBomb;
+    [SerializeField] bool isFlagged;
+    [SerializeField] int numberOfBombs;
 
+    int gridX, gridY;
     bool mouseIsOn;
+    bool hasNumber;
+    bool isRevealed;
 
-    void Start()
+    GameSession gameSession;
+    ColorManager colorManager;
+
+    public Vector2Int GridPosition => new Vector2Int(gridX, gridY);
+    public bool HasBomb => hasBomb;
+    public bool HasNumber => hasNumber;
+
+    void Awake()
     {
-        SetNeighbors();
+        gameSession = FindObjectOfType<GameSession>();
+        colorManager = FindObjectOfType<ColorManager>();
     }
 
-    void SetNeighbors()
+    /// <summary>Called by GridManager when instantiating.</summary>
+    public void SetGridPosition(int x, int y)
     {
-        int firstIndex = int.Parse(index) - 9;
-        string firstIndexString = firstIndex < 10 ? "0" + firstIndex.ToString() : firstIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {firstIndexString}"));
-
-        int secondIndex = int.Parse(index) + 1;
-        string secondIndexString = secondIndex < 10 ? "0" + secondIndex.ToString() : secondIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {secondIndexString}"));
-
-        int thirdIndex = int.Parse(index) + 11;
-        string thirdIndexString = thirdIndex < 10 ? "0" + thirdIndex.ToString() : thirdIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {thirdIndexString}"));
-
-        int forthIndex = int.Parse(index) - 10;
-        string forthIndexIndexString = forthIndex < 10 ? "0" + forthIndex.ToString() : forthIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {forthIndexIndexString}"));
-
-        int fifthIndex = int.Parse(index) + 10;
-        string fifthIndexString = fifthIndex < 10 ? "0" + fifthIndex.ToString() : fifthIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {fifthIndexString}"));
-
-        int sixthIndex = int.Parse(index) - 11;
-        string sixthIndexIndexString = sixthIndex < 10 ? "0" + sixthIndex.ToString() : sixthIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {sixthIndexIndexString}"));
-
-        int seventhIndex = int.Parse(index) - 1;
-        string seventhIndexIndexString = seventhIndex < 10 ? "0" + seventhIndex.ToString() : seventhIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {seventhIndexIndexString}"));
-
-        int eigthIndex = int.Parse(index) + 9;
-        string eigthIndexIndexString = eigthIndex < 10 ? "0" + eigthIndex.ToString() : eigthIndex.ToString();
-        neighbors.Add(GameObject.Find($"GreenTile {eigthIndexIndexString}"));
-    }
-
-    void Update()
-    {
-        if (mouseIsOn && Input.GetMouseButtonDown(0))
-        {
-            Destroy(gameObject);
-        }
-
-        for (int i = 0; i < neighbors.Count; i++)
-        {
-            if (neighbors[i] == null)
-            {
-                neighbors.RemoveAt(i);
-            }
-        }
-    }
-
-    void OnMouseEnter()
-    {
-        mouseIsOn = true;
-        highlight.SetActive(true);
-    }
-
-    void OnMouseExit()
-    {
-        mouseIsOn = false;
-        highlight.SetActive(false);
+        gridX = x;
+        gridY = y;
     }
 
     public void SetColor(bool greenTileIsOffset)
@@ -89,8 +53,125 @@ public class GreenTile : MonoBehaviour
         index = newIndex;
     }
 
-    public List<GameObject> GetNeighbors()
+    /// <summary>Marks this tile as a bomb. Numbering happens later.</summary>
+    public void AsignBomb()
     {
-        return neighbors;
+        hasBomb = true;
+        bomb.SetActive(true);
     }
+
+    void Start()
+    {
+        SetNeighbors();
+    }
+
+    /// <summary>Populates the 8‐neighbor list using the index string.</summary>
+    void SetNeighbors()
+    {
+        int idx = int.Parse(index);
+        int[] offsets = { -9, 1, 11, -10, 10, -11, -1, 9 };
+        foreach (int o in offsets)
+        {
+            int nIdx = idx + o;
+            string nStr = nIdx < 10 ? "0" + nIdx : nIdx.ToString();
+            neighbors.Add(GameObject.Find($"GreenTile {nStr}"));
+        }
+    }
+
+    /// <summary>Compute and show the adjacent‐bomb count.</summary>
+    public void SetNumber()
+    {
+        if (hasBomb)
+        {
+            hasNumber = false;
+            numberText.gameObject.SetActive(false);
+            return;
+        }
+
+        int count = 0;
+        foreach (var n in neighbors)
+            if (n != null && n.GetComponent<GreenTile>().hasBomb)
+                count++;
+
+        if (count > 0)
+        {
+            hasNumber = true;
+            numberText.text = count.ToString();
+            numberText.gameObject.SetActive(true);
+        }
+        else
+        {
+            hasNumber = false;
+            numberText.gameObject.SetActive(false);
+        }
+
+        numberOfBombs = count;
+
+        SetNumberColor();
+    }
+
+    void SetNumberColor()
+    {
+        if (numberOfBombs == 0) return;
+        numberText.color = colorManager.numberColors[numberOfBombs - 1];
+    }
+
+    void Update()
+    {
+        if (gameSession.GetGameOver())
+        {
+            highlight.SetActive(false);
+            return;
+        }
+
+        if (mouseIsOn && Input.GetMouseButtonDown(0) && !isFlagged)
+            gameSession.OnTileClicked(this);
+
+        neighbors.RemoveAll(n => n == null);
+
+        if (mouseIsOn && Input.GetMouseButtonDown(1) && !isRevealed)
+        {
+            ActivateFlag();
+        }
+    }
+
+    void ActivateFlag()
+    {
+        if (isFlagged)
+        {
+            isFlagged = false;
+            flag.SetActive(false);
+        }
+        else
+        {
+            isFlagged = true;
+            flag.SetActive(true);
+        }
+    }
+
+    public void Reveal()
+    {
+        visuals.SetActive(false);
+        isRevealed = true;
+    }
+
+    void OnMouseEnter()
+    {
+        if (gameSession.GetGameOver())
+            return;
+
+        mouseIsOn = true;
+        highlight.SetActive(true);
+    }
+
+    void OnMouseExit()
+    {
+        if (gameSession.GetGameOver())
+            return;
+
+        mouseIsOn = false;
+        highlight.SetActive(false);
+    }
+
+    public List<GameObject> GetNeighbors() => neighbors;
 }
