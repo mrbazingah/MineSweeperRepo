@@ -101,7 +101,7 @@ public class GreenGridManager : MonoBehaviour
         {
             var t = go.GetComponent<GreenTile>();
             if (t != null)
-                t.SetNumber();
+                t.CalculateBomb();
         }
     }
 

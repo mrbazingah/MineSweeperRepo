@@ -54,3 +54,6 @@ TagManager:
   - name: GreenTile
     uniqueID: 2005829643
     locked: 0
+  - name: Flag
+    uniqueID: 3131071933
+    locked: 0

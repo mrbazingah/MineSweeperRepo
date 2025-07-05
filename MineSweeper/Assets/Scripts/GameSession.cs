@@ -20,9 +20,6 @@ public class GameSession : MonoBehaviour
         greenGridManager = FindObjectOfType<GreenGridManager>();
     }
 
-    /// <summary>
-    /// Call this from your tile when it’s clicked.
-    /// </summary>
     public void OnTileClicked(GreenTile tile)
     {
         if (firstClick)
@@ -34,6 +31,44 @@ public class GameSession : MonoBehaviour
 
         visited.Clear();
         FloodFill(tile);
+    }
+
+    /// <summary>
+    /// If the tile is already revealed and has a number,
+    /// and the player has exactly that many flags around it,
+    /// reveal all other (non-flagged) neighbors.
+    /// </summary>
+    public void OnChord(GreenTile tile)
+    {
+        // only on a revealed number
+        if (!tile.IsRevealed() || !tile.HasNumber)
+            return;
+
+        // count flags around
+        int flagCount = 0;
+        foreach (var go in tile.GetNeighbors())
+        {
+            var n = go.GetComponent<GreenTile>();
+            if (n != null && n.IsFlagged())
+                flagCount++;
+        }
+
+        // only proceed if the player's flags match the number
+        if (flagCount != tile.GetBombCount())
+            return;
+
+        // clear visited so we get fresh flood-fill
+        visited.Clear();
+
+        // reveal each unflagged, unrevealed neighbor
+        foreach (var go in tile.GetNeighbors())
+        {
+            var n = go.GetComponent<GreenTile>();
+            if (n != null && !n.IsFlagged() && !n.IsRevealed())
+            {
+                FloodFill(n);
+            }
+        }
     }
 
     private void FloodFill(GreenTile tile)
@@ -49,7 +84,6 @@ public class GameSession : MonoBehaviour
             return;
         }
 
-        // Stop at numbered tiles
         if (tile.HasNumber) return;
 
         foreach (var neighborGO in tile.GetNeighbors())
@@ -92,5 +126,5 @@ public class GameSession : MonoBehaviour
     public bool GetGameOver()
     {
         return gameOver;
-    }   
+    }
 }

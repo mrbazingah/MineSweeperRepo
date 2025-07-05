@@ -1,5 +1,4 @@
-﻿// GreenTile.cs
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -23,6 +22,8 @@ public class GreenTile : MonoBehaviour
     bool hasNumber;
     bool isRevealed;
 
+    List<GreenTile> chordHighlightedTiles = new List<GreenTile>();
+
     GameSession gameSession;
     ColorManager colorManager;
     GreenGridManager gridManager;
@@ -31,6 +32,13 @@ public class GreenTile : MonoBehaviour
     public bool HasBomb => hasBomb;
     public bool HasNumber => hasNumber;
 
+    public bool IsFlagged() => isFlagged;
+    public bool IsRevealed() => isRevealed;
+    public int GetBombCount() => numberOfBombs;
+    public List<GameObject> GetNeighbors() => neighbors;
+
+    public void ShowHighlight(bool on) => highlight.SetActive(on);
+
     void Awake()
     {
         gameSession = FindObjectOfType<GameSession>();
@@ -38,36 +46,13 @@ public class GreenTile : MonoBehaviour
         gridManager = FindObjectOfType<GreenGridManager>();
     }
 
-    /// <summary>Called by GridManager when instantiating.</summary>
-    public void SetGridPosition(int x, int y)
-    {
-        gridX = x;
-        gridY = y;
-    }
+    public void SetGridPosition(int x, int y) { gridX = x; gridY = y; }
+    public void SetColor(bool greenTileIsOffset) => spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
+    public void SetIndex(string newIndex) => index = newIndex;
+    public void AsignBomb() { hasBomb = true; bomb.SetActive(true); }
 
-    public void SetColor(bool greenTileIsOffset)
-    {
-        spriteRenderer.color = greenTileIsOffset ? baseColor : offsetColor;
-    }
+    void Start() => SetNeighbors();
 
-    public void SetIndex(string newIndex)
-    {
-        index = newIndex;
-    }
-
-    /// <summary>Marks this tile as a bomb. Numbering happens later.</summary>
-    public void AsignBomb()
-    {
-        hasBomb = true;
-        bomb.SetActive(true);
-    }
-
-    void Start()
-    {
-        SetNeighbors();
-    }
-
-    /// <summary>Populates the 8‐neighbor list using the index string.</summary>
     void SetNeighbors()
     {
         int idx = int.Parse(index);
@@ -80,8 +65,7 @@ public class GreenTile : MonoBehaviour
         }
     }
 
-    /// <summary>Compute and show the adjacent‐bomb count.</summary>
-    public void SetNumber()
+    public void CalculateBomb()
     {
         if (hasBomb)
         {
@@ -95,27 +79,13 @@ public class GreenTile : MonoBehaviour
             if (n != null && n.GetComponent<GreenTile>().hasBomb)
                 count++;
 
-        if (count > 0)
-        {
-            hasNumber = true;
-            numberText.text = count.ToString();
-            numberText.gameObject.SetActive(true);
-        }
-        else
-        {
-            hasNumber = false;
-            numberText.gameObject.SetActive(false);
-        }
-
+        hasNumber = count > 0;
+        numberText.gameObject.SetActive(hasNumber);
+        if (hasNumber) numberText.text = count.ToString();
         numberOfBombs = count;
 
-        SetNumberColor();
-    }
-
-    void SetNumberColor()
-    {
-        if (numberOfBombs == 0) return;
-        numberText.color = colorManager.numberColors[numberOfBombs - 1];
+        if (count > 0)
+            numberText.color = colorManager.numberColors[count - 1];
     }
 
     void Update()
@@ -123,34 +93,75 @@ public class GreenTile : MonoBehaviour
         if (gameSession.GetGameOver())
         {
             highlight.SetActive(false);
+            ClearChordHighlights();
+            return;
+        }
+
+        bool chordHeld = mouseIsOn && IsRevealed() && HasNumber && Input.GetMouseButton(0) && Input.GetMouseButton(1);
+        if (chordHeld)
+        {
+            int flagCount = 0;
+            foreach (var go in neighbors)
+            {
+                var n = go.GetComponent<GreenTile>();
+                if (n != null && n.IsFlagged()) flagCount++;
+            }
+
+            if (flagCount < numberOfBombs)
+            {
+                foreach (var go in neighbors)
+                {
+                    var n = go.GetComponent<GreenTile>();
+                    if (n != null && !n.IsRevealed() && !n.IsFlagged() && !chordHighlightedTiles.Contains(n))
+                    {
+                        n.ShowHighlight(true);
+                        chordHighlightedTiles.Add(n);
+                    }
+                }
+            }
+            else
+            {
+                ClearChordHighlights();
+            }
+        }
+        else
+        {
+            ClearChordHighlights();
+        }
+
+        if (mouseIsOn && IsRevealed() && HasNumber &&
+            ((Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)) ||
+             (Input.GetMouseButtonDown(1) && Input.GetMouseButton(0))))
+        {
+            gameSession.OnChord(this);
             return;
         }
 
         if (mouseIsOn && Input.GetMouseButtonDown(0) && !isFlagged)
         {
             gameSession.OnTileClicked(this);
+            return;
         }
 
-        neighbors.RemoveAll(n => n == null);
-
-        if (mouseIsOn && Input.GetMouseButtonDown(1) && !isRevealed)
+        if (mouseIsOn && Input.GetMouseButtonDown(1) && !IsRevealed())
         {
             ActivateFlag();
         }
+
+        neighbors.RemoveAll(n => n == null);
+    }
+
+    void ClearChordHighlights()
+    {
+        foreach (var n in chordHighlightedTiles)
+            n.ShowHighlight(false);
+        chordHighlightedTiles.Clear();
     }
 
     void ActivateFlag()
     {
-        if (isFlagged)
-        {
-            isFlagged = false;
-            flag.SetActive(false);
-        }
-        else
-        {
-            isFlagged = true;
-            flag.SetActive(true);
-        }
+        isFlagged = !isFlagged;
+        flag.SetActive(isFlagged);
     }
 
     public void Reveal()
@@ -163,23 +174,15 @@ public class GreenTile : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (gameSession.GetGameOver())
-            return;
-
+        if (gameSession.GetGameOver()) return;
         mouseIsOn = true;
         highlight.SetActive(true);
     }
 
     void OnMouseExit()
     {
-        if (gameSession.GetGameOver())
-            return;
-
+        if (gameSession.GetGameOver()) return;
         mouseIsOn = false;
         highlight.SetActive(false);
     }
-
-    public List<GameObject> GetNeighbors() => neighbors;
-
-    public bool IsRevealed() => isRevealed;
 }
